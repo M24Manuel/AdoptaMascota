@@ -92,6 +92,63 @@ npm run dev
 
 El frontend estará disponible en `http://localhost:5173`
 
+### Scripts de Configuración Automática
+
+Para facilitar la configuración del backend, puedes usar los scripts automatizados:
+
+Linux/Mac:
+```bash
+cd backend
+./setup.sh
+```
+
+Windows:
+```bash
+cd backend
+setup.bat
+```
+
+Estos scripts crearán el entorno virtual, instalarán todas las dependencias y aplicarán las migraciones automáticamente.
+
+## Solución de Problemas
+
+### Error CORS: "falta la cabecera CORS 'Access-Control-Allow-Origin'"
+
+Si recibes este error al intentar hacer peticiones desde el frontend al backend:
+
+1. Asegúrate de que django-cors-headers esté instalado:
+```bash
+cd backend
+source venv/bin/activate  # En Windows: venv\Scripts\activate
+pip install django-cors-headers==4.9.0
+```
+
+2. Reinicia el servidor del backend:
+```bash
+# Detén el servidor con Ctrl+C
+python manage.py runserver 8005
+```
+
+3. Verifica que el frontend esté corriendo en el puerto correcto (5173) y el backend en el puerto 8005.
+
+### Error de Puerto en Uso
+
+Si obtienes "That port is already in use":
+
+1. Encuentra el proceso que está usando el puerto:
+```bash
+# Linux/Mac
+lsof -i :8005
+
+# Windows
+netstat -ano | findstr :8005
+```
+
+2. Detén el proceso o usa un puerto diferente:
+```bash
+python manage.py runserver 8006
+```
+
 ## Tecnologías Utilizadas
 
 ### Backend
