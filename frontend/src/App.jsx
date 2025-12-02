@@ -5,7 +5,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ListaMascotas from "./components/ListaMascotas";
-import { UserProvider } from "./context/UserContext";
+import { UserProvider } from "./context/userContext";
 
 // Páginas por rol
 import AdminInicio from "./pages/AdminInicio";
