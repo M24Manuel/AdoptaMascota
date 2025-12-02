@@ -18,7 +18,7 @@ export default function ListaMascotas() {
   const rol = localStorage.getItem("rol");
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/mascotas/", {
+    fetch("http://127.0.0.1:8005/api/mascotas/", {
       credentials: "include", // necesario cuando usas sesión
     })
       .then((res) => {
@@ -40,7 +40,7 @@ export default function ListaMascotas() {
   const eliminarMascota = async (id) => {
     const csrfToken = getCSRFCookie();
 
-    const res = await fetch(`http://127.0.0.1:8000/api/mascotas/${id}/`, {
+    const res = await fetch(`http://127.0.0.1:8005/api/mascotas/${id}/`, {
       method: "DELETE",
       credentials: "include",
       headers: {
@@ -61,7 +61,7 @@ export default function ListaMascotas() {
     const csrfToken = getCSRFCookie();
 
     const res = await fetch(
-      `http://127.0.0.1:8000/api/mascotas/${id}/adoptar/`,
+      `http://127.0.0.1:8005/api/mascotas/${id}/adoptar/`,
       {
         method: "POST",
         credentials: "include",

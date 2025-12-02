@@ -30,7 +30,7 @@ export default function RegistrarMascota() {
     data.append("especie_id", formData.especie_id);
     data.append("imagen", formData.imagen);
 
-    const res = await fetch("http://127.0.0.1:8000/api/mascotas/", {
+    const res = await fetch("http://127.0.0.1:8005/api/mascotas/", {
         method: "POST",
         credentials: "include",
         headers: {
