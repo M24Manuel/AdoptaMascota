@@ -28,15 +28,20 @@ export default function App() {
               {/* Páginas generales */}
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/mascotas" element={<ListaMascotas />} />
+              <Route path="/registro" element={<Register />} />
+              <Route path="/galeria" element={<ListaMascotas />} />
+              <Route path="/publicar" element={<RegistrarMascota />} />
 
               {/* Páginas por rol */}
               <Route path="/admin" element={<AdminInicio />} />
               <Route path="/publicador" element={<PublicadorInicio />} />
               <Route path="/adoptante" element={<AdoptanteInicio />} />
-              <Route path="/registrar-mascota" element={<RegistrarMascota />} />
               <Route path="/registrar-especie" element={<RegistrarEspecie />} />
+
+              {/* Rutas legacy (mantener por compatibilidad) */}
+              <Route path="/register" element={<Register />} />
+              <Route path="/mascotas" element={<ListaMascotas />} />
+              <Route path="/registrar-mascota" element={<RegistrarMascota />} />
             </Routes>
           </main>
 
