@@ -2,7 +2,7 @@
 import FormularioAuth from "../components/FormularioAuth";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
-import { UserContext } from "../context/UserContext";
+import { UserContext } from "../context/userContext";
 
 export default function Login() {
   // Hook de React Router para navegar entre páginas
