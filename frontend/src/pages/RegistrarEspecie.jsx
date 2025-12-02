@@ -40,7 +40,7 @@ export default function RegistrarEspecie() {
     }
 
     // Hacemos la petición HTTP POST al endpoint de especies
-    const res = await fetch("http://127.0.0.1:8000/api/especies/", {
+    const res = await fetch("http://127.0.0.1:8005/api/especies/", {
       method: "POST", // Método HTTP para crear nuevo recurso
       credentials: "include", // Incluye cookies de sesión en la petición
       headers: {

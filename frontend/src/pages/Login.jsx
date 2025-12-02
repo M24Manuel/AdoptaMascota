@@ -15,7 +15,7 @@ export default function Login() {
   // Función que maneja el proceso de inicio de sesión
   const handleLogin = async (data) => {
     // Realizamos la petición HTTP al endpoint de login del backend
-    const res = await fetch("http://127.0.0.1:8000/api/login/", {
+    const res = await fetch("http://127.0.0.1:8005/api/login/", {
       method: "POST", // Método HTTP para enviar datos
       headers: { "Content-Type": "application/json" }, // Indicamos que enviamos JSON
       credentials: "include", // Crucial para manejar cookies de sesión

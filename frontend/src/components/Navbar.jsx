@@ -28,7 +28,7 @@ export default function Navbar() {
     try {
       const csrfToken = getCookie("csrftoken");
 
-      await fetch("http://127.0.0.1:8000/api/logout/", {
+      await fetch("http://127.0.0.1:8005/api/logout/", {
         method: "POST",
         headers: { "X-CSRFToken": csrfToken },
         credentials: "include",

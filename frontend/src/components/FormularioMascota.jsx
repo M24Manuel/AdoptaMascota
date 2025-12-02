@@ -15,7 +15,7 @@ export default function FormularioMascota({ onSubmit }) {
 
   // Cargar especies
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/especies/")
+    fetch("http://127.0.0.1:8005/api/especies/")
       .then((res) => res.json())
       .then((data) => setEspecies(data))
       .catch((err) => console.error("Error cargando especies:", err));
