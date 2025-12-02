@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { UserContext } from "../context/UserContext";
+import { UserContext } from "../context/userContext";
 import Boton from "../components/Boton";
 import { FaHeart, FaPaw, FaSearch, FaDog, FaPlusCircle, FaCog } from "react-icons/fa";
 
