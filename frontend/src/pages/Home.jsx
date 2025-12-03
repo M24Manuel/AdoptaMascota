@@ -1,205 +1,172 @@
-import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { UserContext } from "../context/userContext";
-import Boton from "../components/Boton";
-import { FaHeart, FaPaw, FaSearch, FaDog, FaPlusCircle, FaCog } from "react-icons/fa";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import Card from "../components/Card";
+import Button from "../components/Button";
+import { mockPets, howItWorks } from "../data/mockData";
 
-export default function Home() {
+const Home = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, rol } = useContext(UserContext);
 
-  // 🔥 BOTONES DINÁMICOS
-  const renderBotonesPorRol = () => {
-    if (!isAuthenticated) {
-      // Visitante
-      return (
-        <>
-          <Boton
-            texto="Ver mascotas"
-            icono={<FaSearch className="text-lg" />}
-            onClick={() => navigate("/mascotas")}
-          />
-          <Boton
-            texto="Registrarme"
-            color="bg-pink-500 hover:bg-pink-600"
-            icono={<FaPaw className="text-lg" />}
-            onClick={() => navigate("/register")}
-          />
-        </>
-      );
-    }
+  const featuredPets = mockPets.filter(pet => !pet.adoptada).slice(0, 3);
 
-    // Usuario autenticado
-    if (rol === "admin") {
-      return (
-        <>
-          <Boton
-            texto="Panel Admin"
-            icono={<FaCog className="text-lg" />}
-            onClick={() => navigate("/admin")}
-          />
-          <Boton
-            texto="Registrar Especie"
-            color="bg-pink-500 hover:bg-pink-600"
-            icono={<FaPlusCircle className="text-lg" />}
-            onClick={() => navigate("/registrar-especie")}
-          />
-          <Boton
-            texto="Registrar Mascota"
-            color="bg-pink-500 hover:bg-pink-600"
-            icono={<FaPlusCircle className="text-lg" />}
-            onClick={() => navigate("/registrar-mascota")}
-          />
-        </>
-      );
-    }
-
-    if (rol === "publicador") {
-      return (
-        <>
-          <Boton
-            texto="Mis Mascotas"
-            icono={<FaDog className="text-lg" />}
-            onClick={() => navigate("/publicador")}
-          />
-          <Boton
-            texto="Registrar Mascota"
-            color="bg-pink-500 hover:bg-pink-600"
-            icono={<FaPlusCircle className="text-lg" />}
-            onClick={() => navigate("/registrar-mascota")}
-          />
-        </>
-      );
-    }
-
-    if (rol === "adoptante") {
-      return (
-        <>
-          <Boton
-            texto="Ver mascotas"
-            icono={<FaDog className="text-lg" />}
-            onClick={() => navigate("/mascotas")}
-          />
-          <Boton
-            texto="Mi Panel"
-            color="bg-pink-500 hover:bg-pink-600"
-            icono={<FaHeart className="text-lg" />}
-            onClick={() => navigate("/adoptante")}
-          />
-        </>
-      );
-    }
+  const getIcon = (iconType) => {
+    const icons = {
+      search: (
+        <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+          <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+        </svg>
+      ),
+      heart: (
+        <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+          <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
+        </svg>
+      ),
+      home: (
+        <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+        </svg>
+      ),
+      star: (
+        <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+        </svg>
+      )
+    };
+    return icons[iconType];
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 to-pink-100">
-      {/* Sección principal */}
-      <div className="container mx-auto px-6 py-16 flex flex-col lg:flex-row items-center justify-between">
-        <div className="lg:w-1/2 text-center lg:text-left mb-12 lg:mb-0">
-          <div className="flex items-center justify-center lg:justify-start gap-3 mb-6">
-            <FaHeart className="text-4xl text-pink-500 animate-pulse" />
-            <h1 className="text-5xl lg:text-6xl font-bold bg-gradient-to-r from-pink-500 to-pink-600 bg-clip-text text-transparent">
-              Adopta Amor
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      <Navbar />
+
+      <section className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-green-600 text-white overflow-hidden">
+        <div className="absolute inset-0 bg-black opacity-10"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
+          <div className="text-center">
+            <h1 className="text-4xl md:text-6xl font-extrabold mb-6 leading-tight">
+              Encuentra a tu <span className="text-yellow-300">Compañero Perfecto</span>
             </h1>
-          </div>
-
-          <h2 className="text-2xl lg:text-3xl font-semibold text-pink-700 mb-6">
-            {isAuthenticated
-              ? rol === "admin"
-                ? "Bienvenido, administrador"
-                : rol === "publicador"
-                ? "Bienvenido, publicador"
-                : "¡Bienvenido, adoptante!"
-              : "Encuentra a tu compañero perfecto"}
-          </h2>
-
-          <p className="text-lg text-gray-700 mb-8 leading-relaxed max-w-lg mx-auto lg:mx-0">
-            {isAuthenticated
-              ? rol === "admin"
-                ? "Gestiona el sistema, las especies y todas las mascotas desde un solo lugar."
-                : rol === "publicador"
-                ? "Registra y administra las mascotas que deseas publicar para adopción."
-                : "Explora, elige y adopta a tu nuevo mejor amigo peludo."
-              : "Miles de mascotas esperan un hogar lleno de amor. ¡Cambia una vida hoy!"}
-          </p>
-
-          {/* Botones dinámicos según rol */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-            {renderBotonesPorRol()}
+            <p className="text-xl md:text-2xl mb-8 text-blue-100 max-w-3xl mx-auto">
+              Miles de mascotas esperan un hogar lleno de amor. Da el primer paso para cambiar una vida.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button
+                text="Explorar Mascotas"
+                onClick={() => navigate("/galeria")}
+                variant="secondary"
+                className="text-lg px-8 py-3"
+              />
+              <Button
+                text="Cómo Funciona"
+                onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
+                variant="outline"
+                className="text-lg px-8 py-3 border-white text-white hover:bg-white hover:text-blue-600"
+              />
+            </div>
           </div>
         </div>
+      </section>
 
-        {/* Imagen lateral */}
-        <div className="lg:w-1/2 relative">
-          <div className="relative z-10">
-            <img
-              src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1074&q=80"
-              alt="Perro y gato juntos"
-              className="rounded-3xl shadow-2xl w-full max-w-lg mx-auto transform hover:scale-105 transition-transform duration-300"
+      <section id="how-it-works" className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              ¿Cómo Funciona?
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              El proceso de adopción es simple y está diseñado para asegurar el mejor match entre tú y tu nueva mascota.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {howItWorks.map((step, index) => (
+              <div key={step.id} className="relative">
+                <div className="bg-gradient-to-br from-blue-50 to-green-50 rounded-2xl p-8 text-center h-full hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-green-500 text-white rounded-full mb-6">
+                    {getIcon(step.icon)}
+                  </div>
+                  <div className="absolute -top-4 -right-4 w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg">
+                    {index + 1}
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">
+                    {step.title}
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed">
+                    {step.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              Mascotas Destacadas
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Conoce a algunas de las mascotas que están buscando un hogar amoroso.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            {featuredPets.map((pet) => (
+              <Card
+                key={pet.id}
+                imagen={pet.imagen}
+                nombre={pet.nombre}
+                edad={pet.edad}
+                especie={pet.especie}
+                descripcion={pet.descripcion}
+                adoptada={pet.adoptada}
+                onVerMas={() => navigate("/galeria")}
+              />
+            ))}
+          </div>
+
+          <div className="text-center">
+            <Button
+              text="Ver Todas las Mascotas"
+              onClick={() => navigate("/galeria")}
+              variant="primary"
+              className="text-lg px-8 py-3"
             />
           </div>
-
-          <div className="absolute -top-4 -left-4 w-24 h-24 bg-pink-200 rounded-full opacity-50 animate-float"></div>
-          <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-pink-300 rounded-full opacity-30 animate-float animation-delay-2000"></div>
         </div>
-      </div>
+      </section>
 
-      {/* Sección de beneficios */}
-      <div className="bg-white py-16">
-        <div className="container mx-auto px-6">
-          <h3 className="text-3xl font-bold text-center text-pink-600 mb-12">
-            ¿Por qué adoptar con nosotros?
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center p-6 rounded-2xl bg-pink-50 hover:bg-pink-100 transition-colors">
-              <div className="w-16 h-16 bg-pink-400 rounded-full flex items-center justify-center mx-auto mb-4">
-                <FaHeart className="text-2xl text-white" />
-              </div>
-              <h4 className="text-xl font-semibold text-pink-700 mb-2">
-                Amor Garantizado
-              </h4>
-              <p className="text-gray-600">Cada mascota viene con amor infinito.</p>
-            </div>
-
-            <div className="text-center p-6 rounded-2xl bg-pink-50 hover:bg-pink-100 transition-colors">
-              <div className="w-16 h-16 bg-pink-400 rounded-full flex items-center justify-center mx-auto mb-4">
-                <FaPaw className="text-2xl text-white" />
-              </div>
-              <h4 className="text-xl font-semibold text-pink-700 mb-2">
-                Salud Verificada
-              </h4>
-              <p className="text-gray-600">Control veterinario completo.</p>
-            </div>
-
-            <div className="text-center p-6 rounded-2xl bg-pink-50 hover:bg-pink-100 transition-colors">
-              <div className="w-16 h-16 bg-pink-400 rounded-full flex items-center justify-center mx-auto mb-4">
-                <FaSearch className="text-2xl text-white" />
-              </div>
-              <h4 className="text-xl font-semibold text-pink-700 mb-2">
-                Seguimiento
-              </h4>
-              <p className="text-gray-600">Apoyo durante la adaptación.</p>
-            </div>
+      <section className="py-20 bg-gradient-to-r from-blue-600 to-green-600 text-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">
+            ¿Listo para Cambiar una Vida?
+          </h2>
+          <p className="text-xl mb-8 text-blue-100">
+            Cada adopción es una segunda oportunidad. Comienza tu viaje hoy y encuentra a tu nuevo mejor amigo.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button
+              text="Crear Cuenta"
+              onClick={() => navigate("/registro")}
+              variant="secondary"
+              className="text-lg px-8 py-3"
+            />
+            <Button
+              text="Ver Galería"
+              onClick={() => navigate("/galeria")}
+              variant="outline"
+              className="text-lg px-8 py-3 border-white text-white hover:bg-white hover:text-blue-600"
+            />
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Llamado a la acción final */}
-      <div className="bg-gradient-to-r from-pink-400 to-pink-500 py-12">
-        <div className="container mx-auto px-6 text-center">
-          <h3 className="text-3xl font-bold text-white mb-4">
-            ¿Listo para cambiar una vida?
-          </h3>
-          <p className="text-pink-100 text-lg mb-6 max-w-2xl mx-auto">
-            Miles de mascotas esperan un hogar. Tu decisión puede marcar la diferencia.
-          </p>
-          <Boton
-            texto={isAuthenticated ? "Ver mascotas" : "Comenzar ahora"}
-            color="bg-pink-600 text-white hover:bg-pink-700"
-            onClick={() => navigate("/mascotas")}
-          />
-        </div>
-      </div>
+      <Footer />
     </div>
   );
-}
+};
+
+export default Home;

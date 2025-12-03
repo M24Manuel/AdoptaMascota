@@ -1,61 +1,162 @@
-// Importamos los componentes y hooks necesarios
-import FormularioAuth from "../components/FormularioAuth";
-import { useNavigate } from "react-router-dom";
-import { useContext } from "react";
+import { useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../context/userContext";
+import { authService } from "../services/api";
+import Input from "../components/Input";
+import Button from "../components/Button";
 
-export default function Login() {
-  // Hook de React Router para navegar entre páginas
+const Login = () => {
   const navigate = useNavigate();
-  
-  // Obtenemos la función loginUser del contexto de usuario
-  // El contexto permite compartir estado entre componentes sin pasar props manualmente
   const { loginUser } = useContext(UserContext);
 
-  // Función que maneja el proceso de inicio de sesión
-  const handleLogin = async (data) => {
-    // Realizamos la petición HTTP al endpoint de login del backend
-    const res = await fetch("http://127.0.0.1:8005/api/login/", {
-      method: "POST", // Método HTTP para enviar datos
-      headers: { "Content-Type": "application/json" }, // Indicamos que enviamos JSON
-      credentials: "include", // Crucial para manejar cookies de sesión
-      body: JSON.stringify(data), // Convertimos los datos del formulario a JSON
-    });
+  const [formData, setFormData] = useState({
+    username: "",
+    password: ""
+  });
 
-    // Procesamos la respuesta del servidor como JSON
-    const result = await res.json();
-    console.log("Respuesta del login:", result); // Para debugging
+  const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
-    // Verificamos si la respuesta contiene información del usuario (login exitoso)
-    if (result.user) {
-      // LOGIN EXITOSO - Proceso en tres pasos:
-
-      // Paso 1: Guardar información en localStorage para persistencia
-      // localStorage mantiene los datos incluso al recargar la página
-      localStorage.setItem("rol", result.user.rol); // Guardamos el rol del usuario
-      localStorage.setItem("user_id", result.user.id); // Guardamos el ID del usuario
-
-      // Paso 2: Actualizar el contexto global de la aplicación
-      // Esto actualiza el estado de React y notifica a todos los componentes suscritos
-      loginUser(result.user.rol); // La función del contexto actualiza isAuthenticated y rol
-
-      // Paso 3: Redirigir al usuario según su rol
-      // Cada tipo de usuario va a una sección diferente de la aplicación
-      if (result.user.rol === "admin") {
-        navigate("/admin"); // Redirige al panel de administración
-      } else if (result.user.rol === "publicador") {
-        navigate("/publicador"); // Redirige al panel del publicador
-      } else {
-        navigate("/adoptante"); // Redirige al panel del adoptante
-      }
-
-    } else {
-      // LOGIN FALLIDO - Mostrar mensaje de error
-      alert("Credenciales inválidas");
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: "" }));
     }
   };
 
-  // Renderizamos el componente de formulario de autenticación
-  // Le pasamos el tipo "login" y la función handleLogin como prop
-  return <FormularioAuth tipo="login" onSubmit={handleLogin} />;
-}
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.username.trim()) {
+      newErrors.username = "El nombre de usuario es requerido";
+    }
+
+    if (!formData.password) {
+      newErrors.password = "La contraseña es requerida";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) return;
+
+    setIsLoading(true);
+
+    try {
+      // Usar authService para login
+      const response = await authService.login({
+        username: formData.username,
+        password: formData.password
+      });
+
+      // Actualizar el contexto con los datos del usuario
+      loginUser(response.user);
+
+      // Redirigir según el rol
+      if (response.user.rol === "admin") {
+        navigate("/admin");
+      } else if (response.user.rol === "publicador") {
+        navigate("/publicador");
+      } else {
+        navigate("/galeria");
+      }
+    } catch (error) {
+      console.error("Error en login:", error);
+      setErrors({ general: error.message || "Credenciales inválidas. Por favor verifica tus datos." });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full">
+        <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-10">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-green-600 rounded-full mb-4">
+              <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 3.5a1.5 1.5 0 013 0V4a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-.5a1.5 1.5 0 000 3h.5a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-.5a1.5 1.5 0 00-3 0v.5a1 1 0 01-1 1H6a1 1 0 01-1-1v-3a1 1 0 00-1-1h-.5a1.5 1.5 0 010-3H4a1 1 0 001-1V6a1 1 0 011-1h3a1 1 0 001-1v-.5z" />
+              </svg>
+            </div>
+            <h2 className="text-3xl font-bold text-gray-900">Bienvenido</h2>
+            <p className="mt-2 text-gray-600">Inicia sesión para continuar</p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {errors.general && (
+              <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded">
+                <div className="flex">
+                  <svg className="w-5 h-5 text-red-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                  <p className="text-sm text-red-700">{errors.general}</p>
+                </div>
+              </div>
+            )}
+
+            <Input
+              label="Usuario"
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              error={errors.username}
+              placeholder="Ingresa tu nombre de usuario"
+              required
+            />
+
+            <Input
+              label="Contraseña"
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              error={errors.password}
+              placeholder="Ingresa tu contraseña"
+              required
+            />
+
+            <Button
+              text={isLoading ? "Iniciando sesión..." : "Iniciar Sesión"}
+              type="submit"
+              variant="primary"
+              disabled={isLoading}
+              className="w-full text-lg py-3"
+            />
+          </form>
+
+          <div className="mt-6 text-center">
+            <p className="text-gray-600">
+              ¿No tienes cuenta?{" "}
+              <Link
+                to="/registro"
+                className="font-medium text-blue-600 hover:text-blue-700 transition-colors"
+              >
+                Regístrate aquí
+              </Link>
+            </p>
+          </div>
+
+          <div className="mt-6 pt-6 border-t border-gray-200">
+            <Link
+              to="/"
+              className="flex items-center justify-center text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              Volver al inicio
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Login;

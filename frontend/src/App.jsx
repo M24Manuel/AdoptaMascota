@@ -1,13 +1,14 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
+import { UserProvider } from "./context/userContext";
+import ProtectedRoute from "./components/ProtectedRoute";
+
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import ListaMascotas from "./components/ListaMascotas";
-import { UserProvider } from "./context/userContext";
+import Gallery from "./pages/Gallery";
+import PublishPet from "./pages/PublishPet";
 
-// Páginas por rol
+import ListaMascotas from "./components/ListaMascotas";
 import AdminInicio from "./pages/AdminInicio";
 import PublicadorInicio from "./pages/PublicadorInicio";
 import AdoptanteInicio from "./pages/AdoptanteInicio";
@@ -15,38 +16,72 @@ import RegistrarMascota from "./pages/RegistrarMascota";
 import RegistrarEspecie from "./pages/RegistrarEspecie";
 
 export default function App() {
-
   return (
     <UserProvider>
       <BrowserRouter>
-        <div className="flex flex-col min-h-screen">
-          
-          <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/registro" element={<Register />} />
+          <Route path="/galeria" element={<Gallery />} />
 
-          <main className="flex-grow bg-pink-50 p-6">
-            <Routes>
-              {/* Páginas generales */}
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/registro" element={<Register />} />
-              <Route path="/galeria" element={<ListaMascotas />} />
-              <Route path="/publicar" element={<RegistrarMascota />} />
+          <Route
+            path="/publicar"
+            element={
+              <ProtectedRoute>
+                <PublishPet />
+              </ProtectedRoute>
+            }
+          />
 
-              {/* Páginas por rol */}
-              <Route path="/admin" element={<AdminInicio />} />
-              <Route path="/publicador" element={<PublicadorInicio />} />
-              <Route path="/adoptante" element={<AdoptanteInicio />} />
-              <Route path="/registrar-especie" element={<RegistrarEspecie />} />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <AdminInicio />
+              </ProtectedRoute>
+            }
+          />
 
-              {/* Rutas legacy (mantener por compatibilidad) */}
-              <Route path="/register" element={<Register />} />
-              <Route path="/mascotas" element={<ListaMascotas />} />
-              <Route path="/registrar-mascota" element={<RegistrarMascota />} />
-            </Routes>
-          </main>
+          <Route
+            path="/publicador"
+            element={
+              <ProtectedRoute requiredRole="publicador">
+                <PublicadorInicio />
+              </ProtectedRoute>
+            }
+          />
 
-          <Footer />
-        </div>
+          <Route
+            path="/adoptante"
+            element={
+              <ProtectedRoute requiredRole="adoptante">
+                <AdoptanteInicio />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/registrar-especie"
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <RegistrarEspecie />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route path="/register" element={<Register />} />
+          <Route path="/mascotas" element={<ListaMascotas />} />
+
+          <Route
+            path="/registrar-mascota"
+            element={
+              <ProtectedRoute>
+                <RegistrarMascota />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
       </BrowserRouter>
     </UserProvider>
   );

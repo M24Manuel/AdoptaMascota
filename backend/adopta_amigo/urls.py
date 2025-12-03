@@ -12,9 +12,14 @@ router.register(r"especies", EspecieViewSet)
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include(router.urls)),
+
+    # Endpoints de autenticación antiguos (mantener por compatibilidad)
     path("api/register/", usuario_views.register, name="register"),
     path("api/login/", usuario_views.login_view, name="login"),
     path("api/logout/", usuario_views.logout_view, name="logout"),
+
+    # Nuevos endpoints de autenticación con class-based views
+    path("api/", include('usuarios.urls')),
 ]
 
 if settings.DEBUG:
