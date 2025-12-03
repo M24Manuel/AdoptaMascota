@@ -35,7 +35,7 @@ AdoptaMascota/
 ```bash
 git clone https://github.com/andreauxue/AdoptaMascota.git
 cd AdoptaMascota
-git checkout equipo-[TU_NUMERO]
+git checkout equipo-[2 integrante]
 ```
 
 ### Configuración del Backend
